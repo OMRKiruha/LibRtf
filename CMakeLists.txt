@@ -7,7 +7,7 @@ include_directories(.)
 include_directories(c)
 include_directories(cpp)
 
-add_library(libRtf
+add_library(Rtf
         c/convert.c
         c/convert.h
         c/ext.c

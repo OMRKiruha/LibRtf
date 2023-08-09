@@ -70,7 +70,7 @@ namespace format
 	{
 	public:
 		explicit bridge()
-			: internal_object ( NULL )
+			: internal_object ( nullptr )
 		{
 			// memset( internal_object, 0, sizeof( T ) );
 		}
@@ -139,7 +139,7 @@ namespace format
 		virtual void put ( const unsigned char * ch, unsigned long size ) =0;
 
 	private:
-		virtual void internal_init();
+		void internal_init() override;
 	};
 
 	class observer  : public bridge
@@ -152,7 +152,7 @@ namespace format
 		virtual void error ( int id, const char *)	=0;
 		
 	private:
-		virtual void internal_init();
+		void internal_init() override;
 	};
 			
 	class source : public bridge
@@ -165,13 +165,13 @@ namespace format
 		virtual void close()				=0;
 		
 	private:
-		virtual void internal_init();
+		void internal_init() override;
 	};
 
 	class fonts
 	{
 	public:
-		virtual ~ fonts() { }
+		virtual ~ fonts() = default;
 		virtual void register_font( int num, const char * fontname, int charset ) 	=0;
 		// virtual const std::string & fontname( int id )			=0;
 	};
@@ -181,7 +181,7 @@ namespace format
 	public:
 		typedef unsigned char uchar;
 		
-		virtual ~ colors() { }
+		virtual ~ colors() = default;
 		virtual void register_color( uchar r, uchar g, uchar b ) =0;
 	};
 
@@ -246,7 +246,7 @@ namespace format
 			types type;
 		};
 
-		virtual ~attributes() { }
+		virtual ~attributes() = default;
 		
 		virtual void enable_attr( int attr, int param, bool enable ) =0;
 		
@@ -269,7 +269,7 @@ namespace format
 			virtual public attributes
 	{
 	protected:
-		virtual void internal_init();
+		void internal_init() override;
 
 		typedef std::string string;
 		// typedef const char * string;
@@ -359,9 +359,9 @@ namespace format
 						  bool log_debug = false );
 		protected:	
 			
-			virtual void debug ( const char * );
-			virtual void warning ( int id, const char * );
-			virtual void error ( int id, const char *);
+			void debug ( const char * ) override;
+			void warning ( int id, const char * ) override;
+			void error ( int id, const char *) override;
 
 		protected:
 			std::ostream & output;
@@ -373,9 +373,9 @@ namespace format
 		public:
 			explicit stream_source( std::istream & input );
 		protected:
-			virtual size_t read(char * buf, size_t chars);
-			virtual void open();
-			virtual void close();
+			size_t read(char * buf, size_t chars) override;
+			void open() override;
+			void close() override;
 		protected:
 			std::istream & input;
 			char * buf;
@@ -388,12 +388,12 @@ namespace format
 			{
 				output.open( f.c_str() );
 			}
-			virtual ~file_image_mgr()
+			~file_image_mgr() override
 			{
 				output.close();
 			}
 			
-			virtual void put( const unsigned char * ch, unsigned long size )
+			void put( const unsigned char * ch, unsigned long size ) override
 			{
 				output.write( (const char*) ch, size );
 			}
@@ -417,18 +417,18 @@ namespace format
 			styles_collection styles;
 			stack attributes;
 			
-			virtual void attr_push( int attr, int param);
-			virtual void attrstack_push();
-			virtual void attrstack_drop();
-			virtual int attr_pop(int);
-			virtual void attr_drop_all();
-			virtual void attr_pop_all();
-			virtual void attr_pop_dump();
-			virtual void attr_remove(int * tab, int size );
+			void attr_push( int attr, int param) override;
+			void attrstack_push() override;
+			void attrstack_drop() override;
+			int attr_pop(int) override;
+			void attr_drop_all() override;
+			void attr_pop_all() override;
+			void attr_pop_dump() override;
+			void attr_remove(int * tab, int size ) override;
 
-			virtual void attr_push_style(format::attributes::style::types type, int style_id);
+			void attr_push_style(format::attributes::style::types type, int style_id) override;
 
-			virtual void register_style(const format::attributes::style & rtf_style );
+			void register_style(const format::attributes::style & rtf_style ) override;
 		};
 
 		class fonts_stack : virtual protected format::fonts
@@ -438,7 +438,7 @@ namespace format
 			typedef std::map< oid, std::string > fonts_container;
 			fonts_container   fonts;
 			
-			virtual void register_font( int id, const char * fontname, int charset );
+			void register_font( int id, const char * fontname, int charset ) override;
 			virtual const std::string & fontname( int id );
 		};
 
@@ -454,7 +454,7 @@ namespace format
 			typedef std::vector< color > colors_container;
 			colors_container   colors;
 
-			virtual void register_color( uchar, uchar, uchar );
+			void register_color( uchar, uchar, uchar ) override;
 		};
 	}
 
